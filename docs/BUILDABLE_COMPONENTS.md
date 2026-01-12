@@ -244,16 +244,24 @@ Scenario: Hospital upgrades retinal imaging device
 
 ## Priority Recommendation
 
-Based on immediate value and feasibility (AI-assisted timelines):
+Based on collaboration phases and logical dependencies:
 
-| Priority | Component | Effort | Impact | Idle Cost |
-|----------|-----------|--------|--------|----------|
-| **1** | Model Evaluation SDK | 3-5 days | High | $0 (client-side) |
-| **2** | Metrics Dashboard | 3-5 days | High | ~$0.02/GB |
-| **3** | Anonymization Pipeline | 2-3 days | Medium | $0 |
-| **4** | Model Hosting Service | 1-2 weeks | High | ~$0.50/month |
-| **5** | Data Shift Detection | 3-5 days | Medium | $0 |
-| **6** | Federated Learning | 2-4 weeks | High | $0 |
+| Priority | Component | Phase | Effort | Idle Cost |
+|----------|-----------|-------|--------|----------|
+| **1** | Model Evaluation SDK | Phase 1 | 3-5 days | $0 (client-side) |
+| **2** | Metrics Dashboard | Phase 1 | 3-5 days | ~$0.02/GB |
+| **3** | Model Hosting Service | Phase 2 | 1-2 weeks | ~$0.50/month |
+| **4** | Anonymization Pipeline | Phase 2 | 2-3 days | $0 |
+| **5** | Data Shift Detection | Phase 2 | 3-5 days | $0 |
+| **6** | Federated Learning | Phase 3 | 2-4 weeks | $0 |
+
+### Why This Order?
+
+1. **SDK + Dashboard first** → Proves the concept with Dr. Eslami (Phase 1: Benchmarking)
+2. **Model Hosting next** → Required before hospitals can call APIs (Phase 2: API Evaluation)
+3. **Anonymization after hosting** → Only useful when there's an API to send data to
+4. **Drift Detection** → Monitoring layer for hosted models
+5. **Federated Learning last** → Advanced feature requiring multi-hospital buy-in (Phase 3)
 
 ---
 
