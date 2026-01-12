@@ -6,7 +6,30 @@ Working with Dr. Mohammad Eslami (Harvard Medical School / Mass Eye and Ear) on 
 
 ---
 
-## Option 1: API-Based Model Evaluation Service
+## Option 1: Benchmarking & Validation Toolkit ⭐ Start Here
+
+**Description**: Create standardized tools for hospitals to evaluate external AI models against their local data.
+
+### How It Works
+1. Provide containerized evaluation environment
+2. Hospital runs models in isolated environment with their data
+3. Automated metric computation (AUC, sensitivity, specificity, etc.)
+4. Standardized reports for FDA/regulatory submissions
+
+### Your Role
+- **Evaluation Framework**: Standardized metrics, statistical tests
+- **Container Orchestration**: Secure model execution environment
+- **Report Generation**: Automated documentation for regulatory purposes
+
+### Benefits
+- Hospitals maintain full data control
+- Standardized evaluation methodology
+- Supports FDA 510(k) submission requirements
+- **Lowest barrier to entry** — no cloud infrastructure needed initially
+
+---
+
+## Option 2: API-Based Model Evaluation Service
 
 **Description**: Build a secure cloud platform where AI companies host models and hospitals evaluate them via APIs.
 
@@ -28,7 +51,7 @@ Working with Dr. Mohammad Eslami (Harvard Medical School / Mass Eye and Ear) on 
 
 ---
 
-## Option 2: Federated Learning Infrastructure
+## Option 3: Federated Learning Infrastructure
 
 **Description**: Build infrastructure enabling collaborative model training across multiple institutions without centralizing data.
 
@@ -47,28 +70,6 @@ Working with Dr. Mohammad Eslami (Harvard Medical School / Mass Eye and Ear) on 
 - Addresses data diversity problem at training time
 - Privacy-preserving by design
 - Can leverage existing frameworks (NVIDIA FLARE, PySyft, Flower)
-
----
-
-## Option 3: Benchmarking & Validation Toolkit
-
-**Description**: Create standardized tools for hospitals to evaluate external AI models against their local data.
-
-### How It Works
-1. Provide containerized evaluation environment
-2. Hospital runs models in isolated environment with their data
-3. Automated metric computation (AUC, sensitivity, specificity, etc.)
-4. Standardized reports for FDA/regulatory submissions
-
-### Your Role
-- **Evaluation Framework**: Standardized metrics, statistical tests
-- **Container Orchestration**: Secure model execution environment
-- **Report Generation**: Automated documentation for regulatory purposes
-
-### Benefits
-- Hospitals maintain full data control
-- Standardized evaluation methodology
-- Supports FDA 510(k) submission requirements
 
 ---
 
@@ -114,18 +115,18 @@ Working with Dr. Mohammad Eslami (Harvard Medical School / Mass Eye and Ear) on 
 ## Recommended Approach: Phased Collaboration
 
 ### Phase 1: Proof of Concept (2-4 weeks)
-- Start with **Option 3** (Benchmarking Toolkit)
+- Start with **Option 1** (Benchmarking Toolkit)
 - Work with Dr. Eslami on a specific use case (e.g., glaucoma assessment)
 - Validate one external model against MEEI data
 - Document findings and methodology
 
 ### Phase 2: Platform Development (1-2 months)
-- Expand to **Option 1** (API-Based Evaluation)
+- Expand to **Option 2** (API-Based Evaluation)
 - Build reusable serverless infrastructure (zero-cost-at-idle)
 - Onboard additional models and potentially other hospitals
 
 ### Phase 3: Scale (3-6 months)
-- Add **Option 2** (Federated Learning) capabilities
+- Add **Option 3** (Federated Learning) capabilities
 - Target FDA validation workflows
 - Commercial offering via AWS Marketplace
 
