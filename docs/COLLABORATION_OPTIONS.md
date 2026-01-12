@@ -11,7 +11,7 @@ Working with Dr. Mohammad Eslami (Harvard Medical School / Mass Eye and Ear) on 
 **Description**: Build a secure cloud platform where AI companies host models and hospitals evaluate them via APIs.
 
 ### How It Works
-1. AI developers deploy models to secure AWS EC2/SageMaker endpoints
+1. AI developers deploy models to **SageMaker Serverless Inference** (zero-cost-at-idle)
 2. Hospital provides a standardized API client for sending anonymized test data
 3. Model returns predictions without accessing raw patient data
 4. Hospital computes performance metrics locally and shares aggregate results
@@ -113,18 +113,18 @@ Working with Dr. Mohammad Eslami (Harvard Medical School / Mass Eye and Ear) on 
 
 ## Recommended Approach: Phased Collaboration
 
-### Phase 1: Proof of Concept (3-6 months)
+### Phase 1: Proof of Concept (2-4 weeks)
 - Start with **Option 3** (Benchmarking Toolkit)
 - Work with Dr. Eslami on a specific use case (e.g., glaucoma assessment)
 - Validate one external model against MEEI data
 - Document findings and methodology
 
-### Phase 2: Platform Development (6-12 months)
+### Phase 2: Platform Development (1-2 months)
 - Expand to **Option 1** (API-Based Evaluation)
-- Build reusable infrastructure
+- Build reusable serverless infrastructure (zero-cost-at-idle)
 - Onboard additional models and potentially other hospitals
 
-### Phase 3: Scale (12+ months)
+### Phase 3: Scale (3-6 months)
 - Add **Option 2** (Federated Learning) capabilities
 - Target FDA validation workflows
 - Commercial offering via AWS Marketplace
