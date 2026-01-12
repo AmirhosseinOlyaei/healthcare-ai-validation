@@ -18,7 +18,7 @@ AI models for healthcare diagnosis face critical generalization challenges:
 ## The Solution
 
 A secure cloud-based platform enabling:
-1. **AI Companies**: Host models on secure cloud instances (AWS EC2) with evaluation APIs
+1. **AI Companies**: Host models on serverless infrastructure (SageMaker Serverless) with evaluation APIs
 2. **Hospitals**: Send patient data through APIs, receive outputs, assess performance locally
 3. **Validation**: Report accuracy metrics back to developers without exposing sensitive datasets
 

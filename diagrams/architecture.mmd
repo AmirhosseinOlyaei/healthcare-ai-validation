@@ -7,10 +7,10 @@ flowchart TB
         D1[Developer Dashboard]
     end
 
-    subgraph PLATFORM["☁️ Cloud Platform (AWS)"]
-        subgraph HOSTING["Model Hosting Layer"]
+    subgraph PLATFORM["☁️ Cloud Platform (AWS) - Zero Cost at Idle"]
+        subgraph HOSTING["Model Hosting Layer (Serverless)"]
             ECR[(Amazon ECR)]
-            SM[SageMaker Endpoints]
+            SM[SageMaker Serverless]
             LAMBDA[Lambda Functions]
         end
         
@@ -26,10 +26,10 @@ flowchart TB
             CT[CloudTrail Logs]
         end
         
-        subgraph DATA["Results Layer"]
-            DDB[(DynamoDB)]
+        subgraph DATA["Results Layer (Pay-per-use)"]
+            DDB[(DynamoDB On-Demand)]
             S3[(S3 Reports)]
-            RDS[(Analytics DB)]
+            ATHENA[Athena Queries]
         end
         
         subgraph MONITOR["Monitoring"]
@@ -102,5 +102,5 @@ flowchart TB
     class M1,M2,D1 devStyle
     class ECR,SM,LAMBDA,APIGW,AUTH platformStyle
     class EHR,PACS,LAB,SDK,ANON,DICOM,CALC,GT,REPORT hospitalStyle
-    class DDB,S3,RDS storageStyle
+    class DDB,S3,ATHENA storageStyle
     class VPC,KMS,WAF,CT securityStyle

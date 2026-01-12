@@ -140,8 +140,8 @@ Companies seeking FDA approval face significant costs. Early external testing:
 ## Technology Focus Areas
 
 ### Cloud Infrastructure
-- **AWS** as primary platform (HIPAA-eligible, HealthLake, SageMaker)
-- Serverless where possible for cost efficiency
+- **AWS** as primary platform (HIPAA-eligible, SageMaker Serverless)
+- **100% Serverless** for zero-cost-at-idle
 - Infrastructure as Code (Terraform/CDK)
 
 ### Security
@@ -156,24 +156,24 @@ Companies seeking FDA approval face significant costs. Early external testing:
 
 ---
 
-## Recommended 12-Month Roadmap
+## Recommended 6-Month Roadmap
 
-### Q1: Foundation
+### Month 1: Foundation (Phase 1)
 - [ ] Python evaluation SDK
 - [ ] Basic metrics dashboard
 - [ ] First ophthalmology model validation (with Dr. Eslami)
 
-### Q2: Platform
-- [ ] Model hosting service (SageMaker-based)
+### Month 2-3: Platform (Phase 2)
+- [ ] Model hosting service (SageMaker Serverless)
 - [ ] Anonymization pipeline
 - [ ] Multi-model comparison
 
-### Q3: Scale
+### Month 4-5: Scale
 - [ ] Data shift detection
 - [ ] Subgroup analysis tools
 - [ ] Second specialty expansion
 
-### Q4: Advanced
+### Month 6: Advanced (Phase 3)
 - [ ] FDA report generator
 - [ ] Federated learning pilot
 - [ ] AWS Marketplace exploration
