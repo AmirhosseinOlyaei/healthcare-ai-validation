@@ -1,0 +1,106 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4F46E5', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4338CA', 'lineColor': '#6366F1', 'secondaryColor': '#F3F4F6', 'tertiaryColor': '#E5E7EB'}}}%%
+
+flowchart TB
+    subgraph DEV["🏢 AI Model Developer"]
+        M1[ML Model Container]
+        M2[Model Metadata]
+        D1[Developer Dashboard]
+    end
+
+    subgraph PLATFORM["☁️ Cloud Platform (AWS)"]
+        subgraph HOSTING["Model Hosting Layer"]
+            ECR[(Amazon ECR)]
+            SM[SageMaker Endpoints]
+            LAMBDA[Lambda Functions]
+        end
+        
+        subgraph API["API Layer"]
+            APIGW[API Gateway]
+            AUTH[Cognito Auth]
+        end
+        
+        subgraph SECURITY["Security Layer"]
+            VPC[VPC Isolation]
+            KMS[KMS Encryption]
+            WAF[AWS WAF]
+            CT[CloudTrail Logs]
+        end
+        
+        subgraph DATA["Results Layer"]
+            DDB[(DynamoDB)]
+            S3[(S3 Reports)]
+            RDS[(Analytics DB)]
+        end
+        
+        subgraph MONITOR["Monitoring"]
+            CW[CloudWatch]
+            DRIFT[Drift Detection]
+            ALERT[Alerting]
+        end
+    end
+
+    subgraph HOSPITAL["🏥 Hospital / Healthcare Institution"]
+        subgraph LOCAL["Local Systems"]
+            EHR[EHR/EMR System]
+            PACS[PACS Imaging]
+            LAB[Lab Systems]
+        end
+        
+        subgraph CLIENT["Evaluation Client"]
+            SDK[Python SDK]
+            ANON[Anonymizer]
+            DICOM[DICOM Handler]
+        end
+        
+        subgraph METRICS["Local Metrics"]
+            CALC[Metrics Calculator]
+            GT[Ground Truth Data]
+            REPORT[Local Reports]
+        end
+    end
+
+    %% Connections
+    M1 -->|Deploy| ECR
+    M2 -->|Register| SM
+    ECR --> SM
+    SM --> APIGW
+    LAMBDA --> APIGW
+    
+    AUTH --> APIGW
+    VPC --> SM
+    KMS --> S3
+    KMS --> DDB
+    WAF --> APIGW
+    CT --> CW
+    
+    EHR --> SDK
+    PACS --> DICOM
+    DICOM --> ANON
+    ANON --> SDK
+    
+    SDK <-->|"🔒 API Calls"| APIGW
+    
+    SDK --> CALC
+    GT --> CALC
+    CALC --> REPORT
+    CALC -->|"📊 Aggregate Metrics Only"| DDB
+    
+    DDB --> D1
+    S3 --> D1
+    
+    SM --> DRIFT
+    DRIFT --> ALERT
+    ALERT --> CW
+
+    %% Styling
+    classDef devStyle fill:#818CF8,stroke:#4F46E5,color:#fff
+    classDef platformStyle fill:#6366F1,stroke:#4338CA,color:#fff
+    classDef hospitalStyle fill:#10B981,stroke:#059669,color:#fff
+    classDef storageStyle fill:#F59E0B,stroke:#D97706,color:#fff
+    classDef securityStyle fill:#EF4444,stroke:#DC2626,color:#fff
+    
+    class M1,M2,D1 devStyle
+    class ECR,SM,LAMBDA,APIGW,AUTH platformStyle
+    class EHR,PACS,LAB,SDK,ANON,DICOM,CALC,GT,REPORT hospitalStyle
+    class DDB,S3,RDS storageStyle
+    class VPC,KMS,WAF,CT securityStyle
