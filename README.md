@@ -69,11 +69,14 @@ Mass Eye and Ear
 Instructor in Ophthalmology  
 Harvard Medical School
 
-## Related Projects
+## Development
 
-- [documind](https://github.com/AmirhosseinOlyaei/documind) - Document processing
-- [ml-pipeline-demo](https://github.com/AmirhosseinOlyaei/ml-pipeline-demo) - ML pipeline demonstration
+Built by **Amir Olyaei**  
+Technical Architect  
+[DevArts Lab](https://notion.so/61c6b79808ce476290c753165851b070)
 
 ## License
 
-TBD
+© 2026 Amir Olyaei / DevArts Lab. All Rights Reserved.
+
+This source code is provided for reference and educational purposes only. No permission is granted to use, copy, modify, merge, publish, distribute, sublicense, or sell copies of this software. See [LICENSE](LICENSE) for details.
