@@ -22,6 +22,12 @@ A secure cloud-based platform enabling:
 2. **Hospitals**: Send patient data through APIs, receive outputs, assess performance locally
 3. **Validation**: Report accuracy metrics back to developers without exposing sensitive datasets
 
+## Design Principle
+
+> **Zero-Cost-at-Idle**: When there are no clients and no evaluations requested, AWS charges = $0
+
+All infrastructure is 100% serverless. See [Cost Model](docs/COST_MODEL.md) for details.
+
 ## Project Structure
 
 ```
@@ -30,6 +36,7 @@ healthcare-ai-validation/
 │   ├── ARCHITECTURE.md          # System architecture design
 │   ├── COLLABORATION_OPTIONS.md # Ways to work with research scientists
 │   ├── BUILDABLE_COMPONENTS.md  # What we can build
+│   ├── COST_MODEL.md            # Zero-cost-at-idle design
 │   └── FOCUS_AREAS.md           # Priority areas for development
 ├── diagrams/
 │   └── architecture.mmd         # Mermaid architecture diagram
@@ -39,6 +46,7 @@ healthcare-ai-validation/
 
 ## Quick Links
 
+- [Cost Model (Zero-Cost-at-Idle)](docs/COST_MODEL.md)
 - [Collaboration Options](docs/COLLABORATION_OPTIONS.md)
 - [System Architecture](docs/ARCHITECTURE.md)
 - [Buildable Components](docs/BUILDABLE_COMPONENTS.md)

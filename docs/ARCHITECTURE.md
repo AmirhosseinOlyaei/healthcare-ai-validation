@@ -1,11 +1,19 @@
 # System Architecture
 
+## Design Principle: Zero-Cost-at-Idle
+
+> **When there are no clients and no evaluations requested, AWS charges = $0**
+
+This is the foundational constraint. See [COST_MODEL.md](COST_MODEL.md) for details.
+
+---
+
 ## High-Level Architecture
 
 The platform connects three key stakeholders:
 1. **AI Model Developers** - Companies building healthcare AI
 2. **Healthcare Institutions** - Hospitals with real-world patient data
-3. **Platform** - Secure cloud infrastructure mediating validation
+3. **Platform** - 100% serverless cloud infrastructure (pay-per-use only)
 
 ---
 
@@ -43,35 +51,39 @@ The platform connects three key stakeholders:
 
 ## Component Details
 
-### 1. Model Hosting Layer
+### 1. Model Hosting Layer (Serverless Only)
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                   MODEL HOSTING LAYER                    │
+│              MODEL HOSTING LAYER (SERVERLESS)            │
 ├─────────────────────────────────────────────────────────┤
 │                                                          │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
-│  │   Amazon    │  │   Amazon    │  │    AWS Lambda   │  │
-│  │   ECR       │  │  SageMaker  │  │   (Serverless)  │  │
-│  │  (Container │  │  (Managed   │  │                 │  │
-│  │   Registry) │  │   Hosting)  │  │                 │  │
-│  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘  │
-│         │                │                   │           │
-│         └────────────────┼───────────────────┘           │
-│                          ▼                               │
-│               ┌──────────────────┐                       │
-│               │   API Gateway    │                       │
-│               │   (REST/GraphQL) │                       │
-│               └──────────────────┘                       │
+│  ┌─────────────┐  ┌───────────────────┐                 │
+│  │   Amazon    │  │ SageMaker         │                 │
+│  │   ECR       │  │ SERVERLESS        │  ← Key: No      │
+│  │  (Storage   │  │ Inference         │    always-on    │
+│  │   only)     │  │ (pay-per-request) │    endpoints    │
+│  └──────┬──────┘  └─────────┬─────────┘                 │
+│         │                   │                            │
+│         └───────────────────┤                            │
+│                             ▼                            │
+│  ┌─────────────┐  ┌──────────────────┐                  │
+│  │ Lambda      │  │   API Gateway    │                  │
+│  │ (orchestr.) │◀─│  (per-request)   │                  │
+│  └─────────────┘  └──────────────────┘                  │
+│                                                          │
+│  💰 Cost at idle: ~$0.10/GB/month (ECR storage only)    │
 │                                                          │
 └─────────────────────────────────────────────────────────┘
 ```
 
-**Technologies:**
-- **Amazon ECR**: Container registry for model images
-- **Amazon SageMaker**: Managed ML inference endpoints
-- **AWS Lambda**: Serverless inference for lightweight models
-- **API Gateway**: Secure, rate-limited API access
+**Technologies (Serverless Only):**
+- **Amazon ECR**: Container storage (~$0.10/GB/month, storage only)
+- **SageMaker Serverless Inference**: Pay-per-inference, $0 at idle
+- **AWS Lambda**: Orchestration, $0 at idle
+- **API Gateway**: Per-request pricing, $0 at idle
+
+**❌ NOT USED**: SageMaker Real-time Endpoints, EC2, ECS/EKS
 
 ### 2. Security & Compliance Layer
 
@@ -140,30 +152,31 @@ The platform connects three key stakeholders:
 - **FHIR Adapter**: Healthcare interoperability standard
 - **Metrics Calculator**: Local computation of performance
 
-### 4. Results & Reporting Layer
+### 4. Results & Reporting Layer (Serverless)
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│              RESULTS & REPORTING LAYER                   │
+│          RESULTS & REPORTING LAYER (SERVERLESS)          │
 ├─────────────────────────────────────────────────────────┤
 │                                                          │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
-│  │   DynamoDB  │  │     S3      │  │    Redshift     │  │
-│  │  (Results   │  │  (Reports   │  │   (Analytics)   │  │
-│  │   Store)    │  │   Storage)  │  │                 │  │
-│  └─────────────┘  └─────────────┘  └─────────────────┘  │
+│  ┌─────────────────────┐  ┌─────────────────────────┐   │
+│  │   DynamoDB          │  │     S3                  │   │
+│  │   ON-DEMAND         │  │  (Reports Storage)      │   │
+│  │  (pay-per-request)  │  │  ~$0.02/GB/month        │   │
+│  └─────────────────────┘  └─────────────────────────┘   │
+│                                                          │
+│  ❌ NO Redshift (always-on cluster)                     │
+│  ✅ Use Athena for analytics (pay-per-query)            │
 │                          │                               │
 │                          ▼                               │
 │  ┌─────────────────────────────────────────────────┐    │
-│  │              REPORTING DASHBOARD                 │    │
-│  │  • Model Performance  • Bias Analysis           │    │
-│  │  • Demographic Breakdowns  • Trend Tracking     │    │
+│  │         REPORTING DASHBOARD (Static Site)        │    │
+│  │  • Hosted on S3 + CloudFront                    │    │
+│  │  • React/Next.js static build                   │    │
+│  │  • $0 compute cost, minimal storage             │    │
 │  └─────────────────────────────────────────────────┘    │
 │                                                          │
-│  ┌─────────────────────────────────────────────────┐    │
-│  │           FDA SUBMISSION REPORT GENERATOR        │    │
-│  │  • 510(k) Format  • Performance Summary         │    │
-│  └─────────────────────────────────────────────────┘    │
+│  💰 Cost at idle: ~$0.02/GB/month (S3 storage only)     │
 │                                                          │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -205,44 +218,59 @@ Hospital                    Platform                    Developer
 
 ---
 
-## AWS Services Summary
+## AWS Services Summary (Serverless Only)
 
-| Layer | Services | Purpose |
-|-------|----------|---------|
-| **Compute** | SageMaker, Lambda, EC2 | Model hosting & inference |
-| **Storage** | S3, DynamoDB, Redshift | Data & results storage |
-| **API** | API Gateway, AppSync | Secure API endpoints |
-| **Security** | IAM, KMS, WAF, VPC | Access control & encryption |
-| **Monitoring** | CloudWatch, CloudTrail | Logging & observability |
-| **Healthcare** | HealthLake | FHIR data management |
+| Layer | Services | Idle Cost |
+|-------|----------|----------|
+| **Compute** | Lambda, SageMaker Serverless | $0 |
+| **Storage** | S3, DynamoDB On-Demand, ECR | ~$0.50/month |
+| **API** | API Gateway | $0 |
+| **Security** | IAM, KMS | $0 |
+| **Monitoring** | CloudWatch (basic) | $0 |
+| **Analytics** | Athena (on-demand) | $0 |
 
----
-
-## Deployment Options
-
-### Option A: Fully Managed (SageMaker)
-- Developers upload models to SageMaker
-- Platform manages scaling, endpoints
-- Best for: Standard ML models
-
-### Option B: Container-Based (ECS/EKS)
-- Developers provide Docker containers
-- More flexibility for custom runtimes
-- Best for: Complex or custom frameworks
-
-### Option C: Serverless (Lambda)
-- For lightweight models (<10GB)
-- Pay-per-inference pricing
-- Best for: Simple classification models
+### ❌ Services NOT Used (Always-On Costs)
+- SageMaker Real-time Endpoints
+- EC2, ECS, EKS
+- RDS, Redshift, ElastiCache
+- NAT Gateway, ALB/NLB
+- HealthLake (if not needed)
 
 ---
 
-## Cost Considerations
+## Deployment: Serverless Only
 
-Costs vary based on:
-- Model complexity and inference time
-- Number of API calls
-- Data transfer volumes
-- Storage requirements
+### Primary: SageMaker Serverless Inference
+```python
+from sagemaker.serverless import ServerlessInferenceConfig
 
-*Refer to AWS pricing calculator for estimates. NDA prevents sharing specific figures.*
+serverless_config = ServerlessInferenceConfig(
+    memory_size_in_mb=4096,
+    max_concurrency=5,
+)
+
+model.deploy(serverless_inference_config=serverless_config)
+# NO instance_type = NO always-on costs
+```
+
+### Alternative: Lambda Container Images
+- For models <10GB
+- Package model in Lambda container
+- Even lower latency for small models
+
+### ❌ NOT USED
+- SageMaker Real-time Endpoints (always-on)
+- ECS/EKS (control plane costs)
+- EC2 (always-on)
+
+---
+
+## Cost Summary
+
+| Usage Level | Monthly Cost |
+|-------------|-------------|
+| **Idle (no requests)** | ~$0.50 |
+| **Light (100 evals)** | ~$2-6 |
+| **Active (10K evals)** | ~$55-205 |
+
+See [COST_MODEL.md](COST_MODEL.md) for detailed breakdown.

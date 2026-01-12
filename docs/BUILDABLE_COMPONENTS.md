@@ -4,9 +4,13 @@
 
 Based on the research and Dr. Eslami's context, here are concrete components we can build, ordered by complexity and value.
 
+### Design Constraints
+- **Zero-cost-at-idle**: All infrastructure must be serverless/pay-per-use
+- **AI-assisted development**: Timelines reflect accelerated development with AI coding agents
+
 ---
 
-## Tier 1: Quick Wins (1-2 months)
+## Tier 1: Quick Wins (1-2 weeks)
 
 ### 1.1 Model Evaluation SDK (Python)
 
@@ -73,8 +77,8 @@ results.to_pdf("dr_model_validation_report.pdf")
 - Next.js 14 (React framework)
 - Tailwind CSS + shadcn/ui
 - Recharts (visualizations)
-- Supabase or DynamoDB (backend)
-- Vercel or AWS (hosting)
+- DynamoDB On-Demand (backend) - $0 at idle
+- S3 + CloudFront (static hosting) - minimal storage cost only
 ```
 
 **Deliverables**:
@@ -84,27 +88,29 @@ results.to_pdf("dr_model_validation_report.pdf")
 
 ---
 
-## Tier 2: Core Platform (3-6 months)
+## Tier 2: Core Platform (2-4 weeks)
 
-### 2.1 Model Hosting Service
+### 2.1 Model Hosting Service (Serverless)
 
 **What**: Secure infrastructure for AI developers to deploy models for evaluation.
 
 **Features**:
 - Docker container upload and registry
-- Auto-scaling inference endpoints
+- **Serverless** inference endpoints (scale to zero)
 - API key management per hospital
 - Usage tracking and billing hooks
 - Model versioning
 
-**Tech Stack**:
+**Tech Stack (Zero-Cost-at-Idle)**:
 ```
-- AWS SageMaker (inference)
-- Amazon ECR (container registry)
-- API Gateway + Lambda (API layer)
-- Cognito (authentication)
-- DynamoDB (metadata)
+- SageMaker SERVERLESS Inference (NOT real-time endpoints)
+- Amazon ECR (container registry) - storage only
+- API Gateway + Lambda (API layer) - per-request
+- Cognito (authentication) - per MAU
+- DynamoDB On-Demand (metadata) - per-request
 ```
+
+**⚠️ CRITICAL**: Do NOT use SageMaker Real-time Endpoints (always-on costs)
 
 **Architecture**:
 ```
@@ -138,13 +144,13 @@ Developer                Platform                    Hospital
 - Recommendations for recalibration
 - Historical drift tracking
 
-**Tech Stack**:
+**Tech Stack (Serverless)**:
 ```
 - Python (drift detection algorithms)
-- AWS Lambda (processing)
-- CloudWatch (alerting)
-- S3 (baseline distributions)
-- SNS (notifications)
+- AWS Lambda (processing) - $0 at idle
+- CloudWatch (alerting) - basic tier free
+- S3 (baseline distributions) - storage only
+- SNS (notifications) - per-message
 ```
 
 **Use Case**:
@@ -168,17 +174,17 @@ Scenario: Hospital upgrades retinal imaging device
 - Audit trail of transformations
 - HIPAA Safe Harbor compliance
 
-**Tech Stack**:
+**Tech Stack (Serverless)**:
 ```
 - pydicom (DICOM manipulation)
 - OpenCV / MediaPipe (face detection)
-- Amazon Comprehend Medical (text PHI)
-- AWS Lambda (processing)
+- Amazon Comprehend Medical (text PHI) - per-request
+- AWS Lambda (processing) - $0 at idle
 ```
 
 ---
 
-## Tier 3: Advanced Features (6-12 months)
+## Tier 3: Advanced Features (1-2 months)
 
 ### 3.1 Federated Learning Orchestrator
 
@@ -191,14 +197,15 @@ Scenario: Hospital upgrades retinal imaging device
 - Progress monitoring dashboard
 - Model convergence tracking
 
-**Tech Stack**:
+**Tech Stack (Cost-Conscious)**:
 ```
 - NVIDIA FLARE or Flower (FL framework)
-- AWS EKS (orchestration)
-- gRPC (communication)
-- TensorFlow/PyTorch (model training)
+- AWS Lambda + Step Functions (orchestration) - NOT EKS
+- gRPC via API Gateway
+- TensorFlow/PyTorch (model training on-demand)
 ```
 
+**Note**: FL training runs on-demand only, no always-on infrastructure.
 **Complexity**: High - requires buy-in from multiple institutions.
 
 ---
@@ -237,16 +244,16 @@ Scenario: Hospital upgrades retinal imaging device
 
 ## Priority Recommendation
 
-Based on immediate value and feasibility:
+Based on immediate value and feasibility (AI-assisted timelines):
 
-| Priority | Component | Effort | Impact |
-|----------|-----------|--------|--------|
-| **1** | Model Evaluation SDK | 4-6 weeks | High |
-| **2** | Metrics Dashboard | 4-6 weeks | High |
-| **3** | Anonymization Pipeline | 2-3 weeks | Medium |
-| **4** | Model Hosting Service | 8-12 weeks | High |
-| **5** | Data Shift Detection | 4-6 weeks | Medium |
-| **6** | Federated Learning | 12+ weeks | High |
+| Priority | Component | Effort | Impact | Idle Cost |
+|----------|-----------|--------|--------|----------|
+| **1** | Model Evaluation SDK | 3-5 days | High | $0 (client-side) |
+| **2** | Metrics Dashboard | 3-5 days | High | ~$0.02/GB |
+| **3** | Anonymization Pipeline | 2-3 days | Medium | $0 |
+| **4** | Model Hosting Service | 1-2 weeks | High | ~$0.50/month |
+| **5** | Data Shift Detection | 3-5 days | Medium | $0 |
+| **6** | Federated Learning | 2-4 weeks | High | $0 |
 
 ---
 
